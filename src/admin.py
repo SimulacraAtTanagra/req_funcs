@@ -47,7 +47,7 @@ def flat_list(nestedlists:list) ->list:  #function to flatten lists
     return(chain(*nestedlists))
 
 def fileverify(fname):
-    os.path.isfile(fname) 
+    return(os.path.isfile(fname) )
   
 def fuzzywuz(person_nm,col: list):
     if person_nm in ' , '.join(col):
@@ -56,6 +56,13 @@ def fuzzywuz(person_nm,col: list):
     choices = col
     x= process.extractOne(query, choices) 
     return(x[0])    
+
+def jsrename(emplid,download_dir):  
+    #this is part of the workflow for downloading things from job summary
+    df=list(colclean(pd.read_html(newest(download_dir,'ps'))[0]).itertuples(index=False,name=None))
+    df=[tuple([emplid]+list(i)) for i in df]
+    write_json(df,f'{download_dir}//{emplid}')   
+
 
 def mover(path,fname,dest):
     oldpath=path+fname
@@ -159,6 +166,10 @@ def update_json(filename,someobj):
         write_json(someobj,filename[:-4])
         
 def write_json(someobj,filename):
-  with open(f'{filename}.json','w') as f:
-    json.dump(someobj,f)
+    if ".json" in filename[-5:]:
+        file=filename
+    else:
+        file=f'{filename}.json'
+    with open(file,'w') as f:
+        json.dump(someobj,f)
     
